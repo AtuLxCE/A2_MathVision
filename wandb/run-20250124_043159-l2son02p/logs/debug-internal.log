@@ -1,0 +1,15 @@
+{"time":"2025-01-24T04:31:59.998497592Z","level":"INFO","msg":"stream: starting","core version":"0.19.4","symlink path":"/home/ubuntu/A2_MathVision/wandb/run-20250124_043159-l2son02p/logs/debug-core.log"}
+{"time":"2025-01-24T04:32:00.100910947Z","level":"INFO","msg":"created new stream","id":"l2son02p"}
+{"time":"2025-01-24T04:32:00.100944248Z","level":"INFO","msg":"stream: started","id":"l2son02p"}
+{"time":"2025-01-24T04:32:00.101005071Z","level":"INFO","msg":"handler: started","stream_id":"l2son02p"}
+{"time":"2025-01-24T04:32:00.101001461Z","level":"INFO","msg":"writer: Do: started","stream_id":"l2son02p"}
+{"time":"2025-01-24T04:32:00.101045373Z","level":"INFO","msg":"sender: started","stream_id":"l2son02p"}
+{"time":"2025-01-24T04:32:00.661299805Z","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-01-24T04:33:05.449129533Z","level":"INFO","msg":"stream: closing","id":"l2son02p"}
+{"time":"2025-01-24T04:33:05.449152724Z","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-01-24T04:33:05.449691009Z","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-01-24T04:33:05.761316433Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-01-24T04:33:05.866911476Z","level":"INFO","msg":"handler: closed","stream_id":"l2son02p"}
+{"time":"2025-01-24T04:33:05.866929957Z","level":"INFO","msg":"writer: Close: closed","stream_id":"l2son02p"}
+{"time":"2025-01-24T04:33:05.866950088Z","level":"INFO","msg":"sender: closed","stream_id":"l2son02p"}
+{"time":"2025-01-24T04:33:05.867010891Z","level":"INFO","msg":"stream: closed","id":"l2son02p"}

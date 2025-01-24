@@ -1,0 +1,30 @@
+==((====))==  Unsloth 2025.1.6: Fast Mllama vision patching. Transformers: 4.48.1.
+   \\   /|    GPU: NVIDIA A10G. Max memory: 22.184 GB. Platform: Linux.
+O^O/ \_/ \    Torch: 2.5.1+cu124. CUDA: 8.6. CUDA Toolkit: 12.4. Triton: 3.1.0
+\        /    Bfloat16 = TRUE. FA [Xformers = 0.0.29.post1. FA2 = False]
+ "-____-"     Free Apache license: http://github.com/unslothai/unsloth
+Unsloth: Fast downloading is enabled - ignore downloading bars which are red colored!
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:02<00:00,  1.11s/it]
+Unsloth: Making `model.base_model.model.language_model` require gradients
+/home/ubuntu/A2_MathVision/.venv/lib/python3.11/site-packages/transformers/training_args.py:1575: FutureWarning: `evaluation_strategy` is deprecated and will be removed in version 4.46 of 🤗 Transformers. Use `eval_strategy` instead
+  warnings.warn(
+/home/ubuntu/A2_MathVision/.venv/lib/python3.11/site-packages/transformers/training_args.py:1575: FutureWarning: `evaluation_strategy` is deprecated and will be removed in version 4.46 of 🤗 Transformers. Use `eval_strategy` instead
+  warnings.warn(
+Traceback (most recent call last):
+  File "/home/ubuntu/A2_MathVision/main.py", line 62, in <module>
+    main()
+  File "/home/ubuntu/A2_MathVision/main.py", line 44, in main
+    trainer = setup_trainer(
+              ^^^^^^^^^^^^^^
+  File "/home/ubuntu/A2_MathVision/models/trainer.py", line 95, in setup_trainer
+    trainer = SFTTrainer(
+              ^^^^^^^^^^^
+  File "/home/ubuntu/A2_MathVision/.venv/lib/python3.11/site-packages/unsloth/trainer.py", line 203, in new_init
+    original_init(self, *args, **kwargs)
+  File "/home/ubuntu/A2_MathVision/.venv/lib/python3.11/site-packages/transformers/utils/deprecation.py", line 165, in wrapped_func
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/A2_MathVision/.venv/lib/python3.11/site-packages/trl/trainer/sft_trainer.py", line 242, in __init__
+    args.max_seq_length = min(processing_class.model_max_length, 1024)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'MllamaProcessor' object has no attribute 'model_max_length'

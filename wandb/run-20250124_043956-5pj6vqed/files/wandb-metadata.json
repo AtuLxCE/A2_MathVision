@@ -1,0 +1,42 @@
+{
+  "os": "Linux-6.8.0-1021-aws-x86_64-with-glibc2.35",
+  "python": "CPython 3.11.11",
+  "startedAt": "2025-01-24T04:39:56.838595Z",
+  "program": "/home/ubuntu/A2_MathVision/main.py",
+  "codePath": "main.py",
+  "git": {
+    "remote": "https://github.com/AtuLxCE/A2_MathVision.git",
+    "commit": "a9a30adc5e7437d35eb7bab56c81a0504b54df2e"
+  },
+  "email": "atul.hero123@gmail.com",
+  "root": "/home/ubuntu/A2_MathVision",
+  "host": "ip-172-31-39-14",
+  "executable": "/home/ubuntu/A2_MathVision/.venv/bin/python3",
+  "codePathLocal": "main.py",
+  "cpu_count": 4,
+  "cpu_count_logical": 8,
+  "gpu": "NVIDIA A10G",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "520120602624",
+      "used": "56670375936"
+    }
+  },
+  "memory": {
+    "total": "33263808512"
+  },
+  "cpu": {
+    "count": 4,
+    "countLogical": 8
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA A10G",
+      "memoryTotal": "24146608128",
+      "cudaCores": 10240,
+      "architecture": "Ampere"
+    }
+  ],
+  "cudaVersion": "12.4"
+}

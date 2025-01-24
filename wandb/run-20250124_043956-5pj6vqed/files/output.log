@@ -1,0 +1,51 @@
+==((====))==  Unsloth 2025.1.6: Fast Mllama vision patching. Transformers: 4.48.1.
+   \\   /|    GPU: NVIDIA A10G. Max memory: 22.184 GB. Platform: Linux.
+O^O/ \_/ \    Torch: 2.5.1+cu124. CUDA: 8.6. CUDA Toolkit: 12.4. Triton: 3.1.0
+\        /    Bfloat16 = TRUE. FA [Xformers = 0.0.29.post1. FA2 = False]
+ "-____-"     Free Apache license: http://github.com/unslothai/unsloth
+Unsloth: Fast downloading is enabled - ignore downloading bars which are red colored!
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:02<00:00,  1.10s/it]
+Unsloth: Making `model.base_model.model.language_model` require gradients
+/home/ubuntu/A2_MathVision/.venv/lib/python3.11/site-packages/transformers/training_args.py:1575: FutureWarning: `evaluation_strategy` is deprecated and will be removed in version 4.46 of 🤗 Transformers. Use `eval_strategy` instead
+  warnings.warn(
+/home/ubuntu/A2_MathVision/.venv/lib/python3.11/site-packages/transformers/training_args.py:1575: FutureWarning: `evaluation_strategy` is deprecated and will be removed in version 4.46 of 🤗 Transformers. Use `eval_strategy` instead
+  warnings.warn(
+==((====))==  Unsloth - 2x faster free finetuning | Num GPUs = 1
+   \\   /|    Num examples = 504 | Num Epochs = 4
+O^O/ \_/ \    Batch size per device = 4 | Gradient Accumulation steps = 2
+\        /    Total batch size = 8 | Total steps = 200
+ "-____-"     Number of trainable parameters = 52,428,800
+🦥 Unsloth needs about 1-3 minutes to load everything - please wait!
+[34m[1mwandb[0m: [33mWARNING[0m The `run_name` is currently set to the same value as `TrainingArguments.output_dir`. If this was not intended, please specify a different run name by setting the `TrainingArguments.run_name` parameter.
+  0%|                                                                                                                        | 0/200 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/home/ubuntu/A2_MathVision/main.py", line 50, in <module>
+    main()
+  File "/home/ubuntu/A2_MathVision/main.py", line 47, in main
+    trainer.train()
+  File "<string>", line 157, in train
+  File "<string>", line 332, in _fast_inner_training_loop
+  File "/home/ubuntu/A2_MathVision/.venv/lib/python3.11/site-packages/unsloth/models/_utils.py", line 1022, in _unsloth_get_batch_samples
+    batch_samples += [next(epoch_iterator)]
+                      ^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/A2_MathVision/.venv/lib/python3.11/site-packages/accelerate/data_loader.py", line 563, in __iter__
+    current_batch = next(dataloader_iter)
+                    ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/A2_MathVision/.venv/lib/python3.11/site-packages/torch/utils/data/dataloader.py", line 701, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/A2_MathVision/.venv/lib/python3.11/site-packages/torch/utils/data/dataloader.py", line 757, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/A2_MathVision/.venv/lib/python3.11/site-packages/torch/utils/data/_utils/fetch.py", line 55, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/A2_MathVision/.venv/lib/python3.11/site-packages/unsloth_zoo/vision_utils.py", line 280, in __call__
+    image, video = process_vision_info(messages)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/A2_MathVision/.venv/lib/python3.11/site-packages/unsloth_zoo/vision_utils.py", line 191, in process_vision_info
+    image_inputs.append(fetch_image(vision_info))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/A2_MathVision/.venv/lib/python3.11/site-packages/unsloth_zoo/vision_utils.py", line 125, in fetch_image
+    elif image.startswith("http://") or image.startswith("https://"):
+         ^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'startswith'

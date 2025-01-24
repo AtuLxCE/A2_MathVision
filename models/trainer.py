@@ -1,98 +1,69 @@
-# models/trainer.py
-
+from unsloth import is_bf16_supported
 from unsloth.trainer import UnslothVisionDataCollator
 from trl import SFTTrainer, SFTConfig
-from unsloth import is_bf16_supported
-from transformers import TextStreamer, EarlyStoppingCallback
-from transformers.trainer_callback import TrainerCallback
-from transformers import TrainerState, TrainerControl
-from transformers import TrainingArguments
-from config.settings import (
-    PER_DEVICE_TRAIN_BATCH_SIZE,
-    GRADIENT_ACCUMULATION_STEPS,
-    WARMUP_STEPS,
-    MAX_STEPS,
-    LEARNING_RATE,
-    WEIGHT_DECAY,
-    LR_SCHEDULER_TYPE,
-    SEED,
-    OUTPUT_DIR,
-    REPORT_TO,
-    MAX_SEQ_LENGTH,
-)
+from transformers import EarlyStoppingCallback, TrainerCallback
+import os
 
-class CustomLoggingCallback(TrainerCallback):
-    """Custom callback for logging training progress."""
-    def on_log(self, args, state, control, logs=None, **kwargs):
-        if state.is_local_process_zero:
-            print(f"Step {state.global_step}: {logs}")
+class UploadToHuggingFaceCallback(TrainerCallback):
+    def __init__(self, model, tokenizer, hf_repo_name):
+        self.model = model
+        self.tokenizer = tokenizer
+        self.hf_repo_name = hf_repo_name
 
-def setup_trainer(model, tokenizer, train_dataset, eval_dataset=None, resume_from_checkpoint=None):
-    """Set up the SFTTrainer with enhanced features."""
-    # Define training arguments
-    training_args = TrainingArguments(
-        output_dir=OUTPUT_DIR,
-        per_device_train_batch_size=PER_DEVICE_TRAIN_BATCH_SIZE,
-        gradient_accumulation_steps=GRADIENT_ACCUMULATION_STEPS,
-        warmup_steps=WARMUP_STEPS,
-        max_steps=MAX_STEPS,
-        learning_rate=LEARNING_RATE,
-        weight_decay=WEIGHT_DECAY,
-        lr_scheduler_type=LR_SCHEDULER_TYPE,
-        fp16=not is_bf16_supported(),
-        bf16=is_bf16_supported(),
-        logging_steps=10,  # Log every 10 steps
-        save_steps=10,  # Save a checkpoint every 10 steps
-        save_total_limit=5,  # Keep only the last 5 checkpoints
-        evaluation_strategy="steps" if eval_dataset else "no",
-        eval_steps=10 if eval_dataset else None,  # Evaluate every 50 steps
-        load_best_model_at_end=True if eval_dataset else False,
-        metric_for_best_model="eval_loss",
-        greater_is_better=False,
-        seed=SEED,
-        report_to=REPORT_TO,
-        remove_unused_columns=False,
-        dataloader_num_workers=4,  # Use multiple workers for data loading
-        resume_from_checkpoint=resume_from_checkpoint,  # Resume from checkpoint
-    )
+    def on_train_end(self, args, state, control, **kwargs):
+        # Upload the best model to Hugging Face
+        self.model.push_to_hub(self.hf_repo_name)
+        self.tokenizer.push_to_hub(self.hf_repo_name)
 
-    # Define callbacks
-    callbacks = [
-        EarlyStoppingCallback(early_stopping_patience=3),  # Stop if no improvement for 3 evaluations
-        CustomLoggingCallback(),  # Custom logging
-    ]
+def setup_trainer(image_model, image_tokenizer, train_dataset, val_dataset, hf_repo_name):
+    # Define the early stopping callback
+    early_stopping_callback = EarlyStoppingCallback(early_stopping_patience=5, early_stopping_threshold=0.001)
 
-    # Set up the SFTTrainer
+    # Define the callback for uploading the best model to Hugging Face
+    upload_to_hf_callback = UploadToHuggingFaceCallback(image_model, image_tokenizer, hf_repo_name)
+
+    # Define WandB settings
+    wandb_config = {
+        "project": "A2_ImageModel_200Epoch",  # WandB project name
+        "name": "run-1",  # WandB run name
+        "resume": "allow",  # Allow resuming runs
+        "id": None,  # Set to a specific run ID to resume
+    }
+
     trainer = SFTTrainer(
-        model=model,
-        tokenizer=tokenizer,
-        data_collator=UnslothVisionDataCollator(model, tokenizer),
+        model=image_model,
+        tokenizer=image_tokenizer,
+        data_collator=UnslothVisionDataCollator(image_model, image_tokenizer),
         train_dataset=train_dataset,
-        eval_dataset=eval_dataset,
-        args=training_args,
-        callbacks=callbacks,
+        eval_dataset=val_dataset,
+        args=SFTConfig(
+            per_device_train_batch_size=4,
+            gradient_accumulation_steps=2,
+            warmup_steps=5,
+            max_steps=200,
+            learning_rate=2e-4,
+            fp16=not is_bf16_supported(),
+            bf16=is_bf16_supported(),
+            logging_steps=1,
+            optim="adamw_8bit",
+            weight_decay=0.01,
+            lr_scheduler_type="linear",
+            seed=3407,
+            output_dir="output/",
+            report_to="wandb",  # Report to WandB
+            remove_unused_columns=False,
+            dataset_text_field="",
+            dataset_kwargs={"skip_prepare_dataset": True},
+            dataset_num_proc=4,
+            max_seq_length=2048,
+            save_strategy="steps",
+            save_steps=10,
+            evaluation_strategy="steps",
+            eval_steps=10,
+            load_best_model_at_end=True,  # Load the best model at the end of training
+            metric_for_best_model="eval_loss",  # Use evaluation loss to determine the best model
+            greater_is_better=False,  # Lower evaluation loss is better
+        ),
+        callbacks=[early_stopping_callback, upload_to_hf_callback],  # Add callbacks
     )
     return trainer
-
-def run_inference(model, tokenizer, image, instruction):
-    """Run inference on a single image."""
-    messages = [
-        {"role": "user", "content": [{"type": "image"}, {"type": "text", "text": instruction}]}
-    ]
-    input_text = tokenizer.apply_chat_template(messages, add_generation_prompt=True)
-    inputs = tokenizer(
-        image,
-        input_text,
-        add_special_tokens=False,
-        return_tensors="pt",
-    ).to("cuda")
-
-    text_streamer = TextStreamer(tokenizer, skip_prompt=True)
-    _ = model.generate(
-        **inputs,
-        streamer=text_streamer,
-        max_new_tokens=800,
-        use_cache=True,
-        temperature=1.5,
-        min_p=0.1,
-    )
