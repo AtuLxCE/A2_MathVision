@@ -1,7 +1,7 @@
 # config/settings.py
 
 # Hugging Face token
-HF_TOKEN = "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"
+HF_TOKEN = ""
 
 # Model and training settings
 MAX_SEQ_LENGTH = 2048
